@@ -1,0 +1,1091 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ShimaEnagaChan - xASSIST</title>
+  <link rel="icon" type="image/x-icon" href="assets/shima-enaga-icon.ico" />
+  <style>
+    :root {
+      /* Liquid Glass Palette */
+      --glass-surface: linear-gradient(
+        135deg, 
+        rgba(255, 255, 255, 0.62) 0%, 
+        rgba(255, 255, 255, 0.25) 100%
+      );
+      --glass-border: 1.2px solid rgba(255, 255, 255, 0.88);
+      --glass-shadow: 
+        0 14px 28px rgba(15, 23, 42, 0.10),
+        inset 0 1.2px 2px 0 rgba(255, 255, 255, 0.95),
+        inset 0 -1px 2px 0 rgba(255, 255, 255, 0.3);
+
+      --pill-bg: rgba(255, 255, 255, 0.55);
+      --pill-border: rgba(255, 255, 255, 0.85);
+      --text-main: #0f284e;
+      --text-muted: #536b88;
+      --accent-blue: #0284c7;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      background: 
+        url("assets/bg.png") center/cover no-repeat fixed,
+        linear-gradient(135deg, #bfdbfe 0%, #e0f2fe 50%, #eff6ff 100%);
+      display: flex;
+      padding: 14px;
+      gap: 14px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      color: var(--text-main);
+      user-select: none;
+    }
+
+    /* Scrollbars */
+    ::-webkit-scrollbar {
+      width: 5px;
+      height: 5px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(148, 163, 184, 0.45);
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(100, 116, 139, 0.7);
+    }
+
+    /* ---------------- GLASS PANELS ---------------- */
+    .glass-panel {
+      background: var(--glass-surface);
+      backdrop-filter: blur(26px) saturate(200%) contrast(102%);
+      -webkit-backdrop-filter: blur(26px) saturate(200%) contrast(102%);
+      border: var(--glass-border);
+      border-radius: 20px;
+      box-shadow: var(--glass-shadow);
+      padding: 14px 16px;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+      min-width: 0;
+      min-height: 0;
+    }
+
+    .glass-panel::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background: linear-gradient(
+        180deg, 
+        rgba(255, 255, 255, 0.35) 0%, 
+        rgba(255, 255, 255, 0.04) 35%, 
+        transparent 60%
+      );
+      pointer-events: none;
+    }
+
+    .glass-panel:hover {
+      border-color: rgba(255, 255, 255, 0.98);
+      box-shadow: 
+        0 18px 36px rgba(56, 189, 248, 0.2),
+        inset 0 1.2px 2px 0 #ffffff;
+    }
+
+    /* Left panel: Calibrated fixed width so controls never stretch */
+    .panel-left {
+      width: 305px;
+      flex: 0 0 305px;
+      overflow-y: auto;
+      overflow-x: hidden;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    /* Right panel: Expands to fill all remaining screen space */
+    .panel-right {
+      flex: 1;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    /* ---------------- MASCOT GRAPHICS ---------------- */
+    .mascot-branch {
+      position: absolute;
+      top: -5px;
+      right: -1px;
+      width: 110px;
+      height: auto;
+      pointer-events: none;
+      z-index: -1;
+      filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.15));
+      transition: transform 0.35s ease;
+    }
+
+    /* Grounded Mascot Footer in Left Panel */
+    .panel-footer-mascot {
+      margin-top: auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 4px;
+      border-top: 1px solid rgba(255, 255, 255, 0.4);
+      flex-shrink: 0;
+    }
+    .mascot-flower-right {
+      position: absolute;
+      bottom: -1px;
+      right: 1px;
+      width: 110px;
+      height: auto;
+      pointer-events: none;
+      z-index: -1;
+      opacity: 1;
+      filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.3));
+      transition: transform .3s ease;
+    }
+
+    .mascot-standing-left {
+      position: absolute;
+      bottom: -3px;
+      left: -1px;
+      width: 150px;
+      height: auto;
+      pointer-events: none;
+      z-index: -10;
+      opacity: 1;
+      filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.3));
+      transition: transform .3s ease;
+    }
+
+    
+
+    /* Anchored mascot resting inside console frame */
+    .mascot-console {
+      position: absolute;
+      bottom: -1px;
+      right: 0px;
+      width: 250px;
+      height: auto;
+      pointer-events: none;
+      z-index: 1;
+      opacity: 0.7;
+      filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.3));
+      transition: transform .3s ease;
+    }
+    /* ---------------- TYPOGRAPHY & FIELDS ---------------- */
+    .header-badge {
+      font-size: 13px;
+      font-weight: 800;
+      color: #0369a1;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      text-shadow: 0 1px 1px rgba(255, 255, 255, 0.8);
+      flex-shrink: 0;
+    }
+
+    /* Collapsible API Keys Accordion */
+    .dropdown-card {
+      background: rgba(255, 255, 255, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.85);
+      border-radius: 14px;
+      overflow: hidden;
+      transition: background 0.25s ease;
+      flex-shrink: 0;
+    }
+    .dropdown-card:hover {
+      background: rgba(255, 255, 255, 0.5);
+    }
+
+    .dropdown-header {
+      padding: 7px 11px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      font-size: 11.5px;
+      font-weight: 700;
+      color: #0369a1;
+    }
+
+    .chevron-icon {
+      width: 14px;
+      height: 14px;
+      stroke: #0369a1;
+      stroke-width: 2.4;
+      fill: none;
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .dropdown-card.open .chevron-icon {
+      transform: rotate(180deg);
+    }
+
+    .dropdown-body {
+      max-height: 0;
+      opacity: 0;
+      overflow: hidden;
+      padding: 0 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+                  opacity 0.25s ease,
+                  padding 0.25s ease;
+    }
+
+    .dropdown-card.open .dropdown-body {
+      max-height: 310px;
+      opacity: 1;
+      padding: 4px 10px 10px 10px;
+    }
+
+    .field-group {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .field-label {
+      font-size: 9.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-muted);
+    }
+
+    .pill-input {
+      width: 100%;
+      height: 27px;
+      padding: 0 10px;
+      border-radius: 13px;
+      border: 1px solid var(--pill-border);
+      background: var(--pill-bg);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      font-size: 11px;
+      outline: none;
+      color: var(--text-main);
+      box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.04);
+      transition: all 0.2s ease;
+    }
+
+    .pill-input:focus {
+      background: rgba(255, 255, 255, 0.95);
+      border-color: #38bdf8;
+      box-shadow: 0 0 0 2.5px rgba(56, 189, 248, 0.3);
+    }
+
+    .secret-input-wrap {
+      display: flex;
+      align-items: center;
+      position: relative;
+    }
+
+    .secret-input-wrap .pill-input {
+      padding-right: 34px;
+    }
+
+    .toggle-visibility {
+      position: absolute;
+      right: 7px;
+      width: 23px;
+      height: 23px;
+      border: 0;
+      border-radius: 50%;
+      background: transparent;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 13px;
+      line-height: 23px;
+      padding: 0;
+    }
+
+    .toggle-visibility:hover,
+    .toggle-visibility:focus-visible {
+      background: rgba(2, 132, 199, 0.12);
+      color: var(--accent-blue);
+      outline: none;
+    }
+
+    /* ---------------- BUTTONS & ACTIONS ---------------- */
+    .action-btn-wrap {
+      position: relative;
+      flex-shrink: 0;
+    }
+
+    .action-btn {
+      width: 100%;
+      height: 34px;
+      border-radius: 17px;
+      border: 1px solid rgba(255, 255, 255, 0.85);
+      font-size: 11.5px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      position: relative;
+      overflow: visible;
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.06), inset 0 1px 1px #fff;
+      transition: transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1), 
+                  box-shadow 0.18s ease;
+    }
+
+    [data-tooltip] {
+      position: relative;
+      font-family: "Arial Rounded MT Bold", "Segoe UI", sans-serif;
+    }
+
+    [data-tooltip]::after {
+      content: attr(data-tooltip);
+      position: absolute;
+      left: 50%;
+      bottom: calc(100% + 9px);
+      z-index: 20;
+
+      max-width: 220px;
+      padding: 7px 11px;
+      border: 2px solid rgba(255, 255, 255, 0.9);
+      border-radius: 18px;
+      background: linear-gradient(135deg, #fff1f8, #e0f2fe);
+      color: #7c3aed;
+
+      font-family: "Arial Rounded MT Bold", "Segoe UI", sans-serif;
+      font-size: 10px;
+      font-weight: 700;
+      line-height: 1.3;
+      text-align: center;
+      white-space: normal;
+      pointer-events: none;
+      box-shadow:
+        0 5px 14px rgba(167, 139, 250, 0.25),
+        inset 0 1px 2px #fff;
+      opacity: 0;
+      transform: translate(-50%, 6px) scale(0.94);
+      transition: opacity 0.18s ease, transform 0.18s ease;
+    }
+
+    [data-tooltip]:hover::after,
+    [data-tooltip]:focus-visible::after {
+      opacity: 1;
+      transform: translate(-50%, 0) scale(1);
+    }
+
+    button:disabled {
+      cursor: wait;
+      opacity: 0.7;
+      transform: none;
+    }
+
+    .action-btn:hover {
+      transform: translateY(-1.5px);
+    }
+    .action-btn:active {
+      transform: translateY(0.5px);
+    }
+
+    .btn-save {
+      height: 28px;
+      font-size: 11px;
+      background: linear-gradient(135deg, rgba(224, 242, 254, 0.92), rgba(186, 230, 253, 0.75));
+      color: #0369a1;
+    }
+    .btn-save:hover {
+      box-shadow: 0 4px 12px rgba(56, 189, 248, 0.35);
+    }
+
+    .btn-generate {
+      background: linear-gradient(135deg, rgba(253, 242, 248, 0.92), rgba(251, 207, 232, 0.75));
+      color: #be185d;
+    }
+    .btn-generate:hover {
+      box-shadow: 0 5px 16px rgba(244, 114, 182, 0.4);
+    }
+
+    .btn-post {
+      background: linear-gradient(135deg, rgba(240, 249, 255, 0.92), rgba(224, 242, 254, 0.75));
+      color: #0c4a6e;
+    }
+    .btn-post:hover {
+      box-shadow: 0 5px 16px rgba(96, 165, 250, 0.38);
+    }
+
+    .section-heading {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 5px;
+    }
+
+    .section-heading .header-badge {
+      margin-bottom: 0;
+    }
+
+    .btn-randomize {
+      width: auto;
+      min-width: 92px;
+      height: 26px;
+      padding: 0 10px;
+      border-radius: 13px;
+      background: linear-gradient(135deg, #fff1f8, #e0f2fe);
+      color: #7c3aed;
+      font-size: 10px;
+    }
+
+    .btn-randomize:hover {
+      box-shadow: 0 4px 12px rgba(167, 139, 250, 0.28);
+    }
+
+    .dispatch-controls {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .btn-review {
+      background: linear-gradient(135deg, rgba(255, 247, 237, 0.92), rgba(254, 215, 170, 0.75));
+      color: #9a3412;
+    }
+
+    .btn-dispatch {
+      background: linear-gradient(135deg, rgba(224, 242, 254, 0.92), rgba(186, 230, 253, 0.75));
+      color: #0369a1;
+    }
+
+    /* Peeking Mascot */
+    .btn-peek-mascot {
+      position: absolute;
+      right: 10px;
+      bottom: -3px;
+      height: 35px;
+      width: auto;
+      pointer-events: none;
+      z-index: 10;
+      transition: transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+      transform-origin: bottom center;
+      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.14));
+    }
+    .action-btn-wrap:hover .btn-peek-mascot {
+      transform: translateY(-6px) rotate(4deg) scale(1.1);
+    }
+
+    /* Side-by-Side Links */
+    .social-links-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 7px;
+      flex-shrink: 0;
+    }
+
+    .social-link-btn {
+      height: 29px;
+      border-radius: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.85);
+      background: rgba(255, 255, 255, 0.45);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      color: var(--text-main);
+      font-size: 10.5px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      cursor: pointer;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.04), inset 0 1px 1px #fff;
+      transition: all 0.2s ease;
+    }
+
+    .social-link-btn:hover {
+      background: rgba(255, 255, 255, 0.88);
+      color: var(--accent-blue);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(56, 189, 248, 0.25);
+    }
+
+    .social-link-btn svg {
+      width: 12px;
+      height: 12px;
+      fill: currentColor;
+    }
+
+    /* Spinner & Ripple */
+    .spinner {
+      width: 12px;
+      height: 12px;
+      border: 2px solid rgba(0, 0, 0, 0.2);
+      border-top-color: currentColor;
+      border-radius: 50%;
+      animation: spin 0.75s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .ripple {
+      position: absolute;
+      border-radius: 50%;
+      transform: scale(0);
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.1) 70%);
+      animation: ripple-wave 0.5s ease-out;
+      pointer-events: none;
+    }
+    @keyframes ripple-wave {
+      to { transform: scale(4); opacity: 0; }
+    }
+
+    /* ---------------- TEXTAREAS & CONSOLE ---------------- */
+    .card-box {
+      background: rgba(255, 255, 255, 0.52);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1.2px solid var(--pill-border);
+      border-radius: 14px;
+      padding: 8px 12px;
+      width: 100%;
+      font-size: 12px;
+      line-height: 1.45;
+      color: var(--text-main);
+      resize: vertical;
+      min-height: 54px;
+      max-height: 170px;
+      overflow-y: auto;
+      outline: none;
+      box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.04);
+      transition: all 0.2s ease;
+    }
+    .card-box:focus {
+      background: rgba(255, 255, 255, 0.9);
+      border-color: #38bdf8;
+      box-shadow: 0 0 0 2.5px rgba(56, 189, 248, 0.28);
+    }
+
+    .content-heading {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .character-count {
+      color: var(--text-muted);
+      font-size: 10px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .character-count.near-limit {
+      color: #c2410c;
+    }
+
+    .character-count.at-limit {
+      color: #be123c;
+    }
+
+    .console-wrapper {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      min-height: 120px;
+    }
+
+      
+
+    #console-box {
+      flex: 1;
+      border-radius: 14px;
+      padding: 10px 12px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 11px;
+      line-height: 1.5;
+      color: #38bdf8;
+      overflow-y: auto;
+      white-space: pre-wrap;
+      word-break: break-word;
+
+      border: 1px solid rgba(255, 255, 255, 0.85);
+      background: rgba(255, 255, 255, 0.45);
+      backdrop-filter: blur(1px);
+      -webkit-backdrop-filter: blur(8px);
+      color: var(--text-main);
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.04), inset 0 1px 1px #fff;
+      user-select: text;
+      cursor: text;
+    }
+    /* Container stays fixed over the background, under/around the cards */
+.sakura-container {
+  position: fixed;
+  inset: 0;
+  pointer-events: none; /* Allows clicks to pass through completely */
+  z-index: 1;           /* Places petals directly between bg and cards */
+  overflow: hidden;
+}
+
+/* Ensure glass panels render above petals */
+.glass-panel {
+  position: relative;
+  z-index: 0;
+}
+
+/* Organic Petal Geometry using border-radius curves */
+.petal {
+  position: absolute;
+  top: -30px;
+  left: var(--left);
+  width: var(--size);
+  height: calc(var(--size) * 1.35);
+  background: radial-gradient(
+    circle at 40% 30%, 
+    #ffffff 0%, 
+    #fed7e2 40%, 
+    #f472b6 100%
+  );
+  border-radius: 15px 0px 15px 0px; /* Characteristic cherry blossom teardrop */
+  opacity: 0.6;
+  filter: drop-shadow(0 2px 4px rgba(244, 114, 182, 0.25));
+  will-change: transform, opacity;
+  animation: fall var(--duration) linear infinite;
+  animation-delay: var(--delay);
+}
+
+/* Falling, Tumbling, and Drifting Physics */
+@keyframes fall {
+  0% {
+    top: -30px;
+    opacity: 0;
+    transform: translateX(0) rotate(0deg) rotateY(0deg);
+  }
+  10% {
+    opacity: 0.9;
+  }
+  50% {
+    transform: translateX(60px) rotate(180deg) rotateY(180deg);
+  }
+  90% {
+    opacity: 0.6;
+  }
+  100% {
+    top: 105vh;
+    opacity: 0;
+    transform: translateX(110px) rotate(360deg) rotateY(360deg);
+  }
+}
+  </style>
+</head>
+<body>
+
+  <!-- Floating Petal Overlay -->
+<div class="sakura-container" aria-hidden="true">
+  <div class="petal" style="--left: 8%;  --delay: 0s;   --duration: 7s;  --size: 14px;"></div>
+  <div class="petal" style="--left: 22%; --delay: 2.5s; --duration: 8.5s; --size: 11px;"></div>
+  <div class="petal" style="--left: 38%; --delay: 1.2s; --duration: 6.5s; --size: 16px;"></div>
+  <div class="petal" style="--left: 54%; --delay: 4s;   --duration: 9s;  --size: 12px;"></div>
+  <div class="petal" style="--left: 67%; --delay: 0.5s; --duration: 7.5s; --size: 15px;"></div>
+  <div class="petal" style="--left: 79%; --delay: 3.1s; --duration: 6s;  --size: 10px;"></div>
+  <div class="petal" style="--left: 91%; --delay: 1.8s; --duration: 8s;  --size: 13px;"></div>
+</div>
+
+  <!-- LEFT CONTROL PANEL -->
+  <div class="glass-panel panel-left">
+    <img src="assets/bird_branch.png" class="mascot-branch" alt="ShimaEnaga Branch" />
+    <div class="header-badge">🕊️ ShimaEnagaChan</div>
+
+    <!-- COLLAPSIBLE AI CONFIGURATION -->
+    <div class="dropdown-card" id="api-dropdown">
+      <div class="dropdown-header" onclick="toggleApiDropdown()">
+        <span>⤷ AI Configuration</span>
+        <svg class="chevron-icon" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="6 9 12 15 18 9"></polyline>
+        </svg>
+      </div>
+
+      <div class="dropdown-body">
+        <div class="field-group">
+          <label class="field-label" for="groq_api_key">● Groq API Key</label>
+          <div class="secret-input-wrap">
+            <input type="password" id="groq_api_key" class="pill-input" autocomplete="off" />
+            <button type="button" class="toggle-visibility" data-tooltip="Show or hide key" onclick="togglePassword('groq_api_key', this)" aria-label="Show Groq API Key" title="Show or hide key">👁</button>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label" for="llm_model">● LLM Model</label>
+          <input type="text" id="llm_model" class="pill-input" autocomplete="off" placeholder="gxxxxxx" />
+        </div>
+
+        <div class="action-btn-wrap" style="margin-top: 2px;">
+          <button type="button" class="action-btn btn-save" data-tooltip="Save AI settings" onclick="saveCredentials(this)" aria-label="Save AI configuration" title="Save AI settings">🗁 Save Keys to .env</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ACTION BUTTONS -->
+    <div class="action-btn-wrap">
+      <button type="button" class="action-btn btn-generate" data-tooltip="Create a post from your topic" onclick="generateNow(this)" aria-label="Generate content" title="Generate content">࣪˖✦ Generate Content</button>
+      <img src="assets/bird_peek_3.png" class="btn-peek-mascot" alt="Peek Mascot" />
+    </div>
+
+    <div class="action-btn-wrap">
+      <button type="button" class="action-btn btn-post" data-tooltip="Open X and post now" onclick="dispatchNow(this)" aria-label="Dispatch post immediately" title="Open X and post now">🗲 Dispatch Immediately</button>
+      <img src="assets/bird_peek_2.png" class="btn-peek-mascot" alt="Peek Mascot" />
+    </div>
+
+    <!-- SIDE-BY-SIDE LINKS -->
+    <div class="social-links-row">
+      <button type="button" class="social-link-btn" data-tooltip="Open GitHub" onclick="openExternal('github')" aria-label="Open GitHub profile" title="Open GitHub">
+        <svg viewBox="0 0 24 24">
+          <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+        </svg>
+        <span>GitHub</span>
+      </button>
+
+      <button type="button" class="social-link-btn" data-tooltip="Open website" onclick="openExternal('website')" aria-label="Open project website" title="Open website">
+        <svg viewBox="0 0 24 24">
+          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
+        </svg>
+        <span>Website</span>
+      </button>
+    </div>
+
+    <!-- GROUNDED FOOTER MASCOT CONTAINER -->
+    <div class="panel-footer-mascot">
+      <img src="assets/bird_standing_left_bottom.png" class="mascot-standing-left" alt="Standing Mascot" />
+    </div>
+    <div class="panel-footer-mascot">
+      <img src="assets/flower_leaves_left_bottom.png" class="mascot-flower-right" alt="Flower" />
+    </div>
+  </div>
+
+  <!-- RIGHT WORKSPACE PANEL (FLUID) -->
+  <div class="glass-panel panel-right">
+    <div>
+      <div class="section-heading">
+        <div class="header-badge">◕⩊◕ Persona & Focus Rules </div>
+        <button
+          type="button"
+          class="action-btn btn-randomize"
+          data-tooltip="Try a fresh focus"
+          onclick="randomizePersona(this)"
+          aria-label="Randomize persona and focus"
+          title="Randomize persona and focus"
+        >🎲 Randomize</button>
+      </div>
+      <textarea id="persona-topic" class="card-box auto-grow" rows="2">Practical development tips, sharp observations on software architecture and AI tools, building products, and tech productivity.</textarea>
+    </div>
+
+    <div>
+      <div class="content-heading">
+        <div class="header-badge">✎﹏﹏ Generated Post Content </div>
+        <span id="character-count" class="character-count" aria-live="polite">0 / 280</span>
+      </div>
+      <textarea id="generated-content" class="card-box auto-grow" rows="3" maxlength="280" placeholder="Your post appears here. Edit before posting..." aria-describedby="character-count"></textarea>
+    </div>
+
+    <div class="dispatch-controls">
+      <button type="button" class="action-btn btn-review" data-tooltip="Review and post manually" onclick="openReviewMode()" aria-label="Review post in X" title="Review and post manually">
+        🔍 Review in X
+      </button>
+      <button type="button" class="action-btn btn-dispatch" data-tooltip="Post automatically with Ctrl+Enter" onclick="triggerAutoDispatch(this)" aria-label="Automatically dispatch post" title="Post automatically with Ctrl+Enter">
+        ⚡ 1-Click Auto Dispatch
+      </button>
+    </div>
+
+    <div class="console-wrapper">
+      <div class="header-badge">▰▰▱ Activity Log & Live Status </div>
+      <div id="console-box"></div>
+      <img src="assets/bird_standing.png" class="mascot-console" alt="Console Mascot" />
+    </div>
+  </div>
+
+<script>
+const MAX_POST_LENGTH = 280;
+
+function resizeTextArea(textarea) {
+  textarea.style.height = "auto";
+  textarea.style.height = `${Math.min(textarea.scrollHeight, 170)}px`;
+}
+
+function updateCharacterCount() {
+  const field = document.getElementById('generated-content');
+  const counter = document.getElementById('character-count');
+  const length = field.value.length;
+  counter.textContent = `${length} / ${MAX_POST_LENGTH}`;
+  counter.classList.toggle('near-limit', length >= MAX_POST_LENGTH - 40);
+  counter.classList.toggle('at-limit', length >= MAX_POST_LENGTH);
+  resizeTextArea(field);
+}
+
+function setupTextAreas() {
+  document.querySelectorAll('.auto-grow').forEach((textarea) => {
+    textarea.addEventListener('input', () => resizeTextArea(textarea));
+    textarea.addEventListener('change', () => resizeTextArea(textarea));
+    resizeTextArea(textarea);
+  });
+  document.getElementById('generated-content').addEventListener('input', updateCharacterCount);
+  updateCharacterCount();
+}
+
+function randomizePersonaLocal() {
+  const personas = [
+    // Authentic / practical
+    "A practical senior engineer sharing one clear lesson",
+    "A curious indie hacker documenting the build in public",
+    
+    // Viral / engagement
+    "A solo founder sharing an honest milestone and what it took to reach it",
+    "A productivity enthusiast testing ambitious routines and sharing the results",
+    "A thread writer turning books and research into practical takeaways",
+    "A startup founder reflecting on shipping, customers, and hard trade-offs",
+    
+    // Strong opinions
+    "A systems programmer defending simple, low-level engineering principles",
+    "A technology leader challenging assumptions about remote work and careers",
+    "A software architect questioning whether modern stacks add real value",
+    "A direct hiring manager sharing lessons from evaluating engineering talent",
+    
+    // Humorous / chaotic
+    "A sleep-deprived developer surviving a difficult release",
+    "A DevOps engineer calmly reporting a Friday production incident",
+    "A tech worker applying software patterns to everyday life",
+    "A paranoid developer joking about the office coffee machine mining crypto"
+  ];
+
+  const focuses = [
+    // Practical / engineering
+    "a debugging habit that saves time",
+    "an architecture decision that helped a product scale",
+    
+    // Growth / tools
+    "a common mistake people make with modern AI tools",
+    "a practical framework for learning a valuable technical skill",
+    "the reality of leaving a stable job to build a small product",
+    "a curated set of free developer tools worth trying",
+    "the difference between working efficiently and simply working harder",
+    
+    // Debate / strong opinions
+    "whether junior developers should expect structured mentorship",
+    "the trade-off between a strict work schedule and career growth",
+    "whether popular stacks are helping or weakening engineering fundamentals",
+    "when automated tests are worth their cost and maintenance",
+    "whether IDE automation improves or hides engineering understanding",
+    
+    // Absurd / humorous
+    "a risky hotfix pushed just before a long vacation",
+    "using Git merge conflicts as a metaphor for everyday disagreements",
+    "spending hours debugging before discovering the server was not running",
+    "replacing an over-engineered system with one simple solution",
+    "optimizing sleep and work around cloud pricing fluctuations"
+  ];
+
+  const formats = [
+    // Standard value
+    "Use a strong opening line and one memorable takeaway",
+    "Share a concise observation followed by a practical example",
+    "Write it as a short build-in-public update",
+    "Use a useful contrast such as 'Instead of X, try Y'",
+    "End with a simple question that encourages replies",
+    "Make it feel like a genuine lesson learned, not an advertisement",
+    
+    // Viral / engagement
+    "Use short, single-sentence lines that are easy to scan",
+    "Start with a clear hook that creates curiosity without exaggeration",
+    "Share three concise takeaways from a real experience",
+    "End with a useful invitation to bookmark or discuss the idea",
+    
+    // Strong opinions
+    "Open with a clear opinion and support it with one specific example",
+    "Challenge a common practice without insulting the people who use it",
+    "Present two competing options and explain the trade-off",
+    
+    // Humorous
+    "Write an all-lowercase cryptic one-liner with no punctuation",
+    "Use a short fake dialogue: 'them: [...] me: [...]'",
+    "Describe a production disaster in a calm, matter-of-fact tone",
+    "Apply a formal corporate postmortem style to a trivial personal failure"
+  ];
+
+  const pick = (items) => items[Math.floor(Math.random() * items.length)];
+  const topic = `${pick(personas)}. Focus on ${pick(focuses)}. ${pick(formats)}. Write for X: concise, natural, useful, and easy to scan.`;
+  const personaField = document.getElementById('persona-topic');
+  personaField.value = topic;
+  resizeTextArea(personaField);
+  appendLog("🎲 Persona and focus randomized.");
+}
+
+async function randomizePersona(btn) {
+  await runWithButton(btn, "Creating...", async () => {
+    if (!window.pywebview || !window.pywebview.api) {
+      appendLog("❌ App bridge is not ready.");
+      return;
+    }
+
+    const topic = await pywebview.api.generate_persona_focus();
+    if (!topic) return;
+
+    const personaField = document.getElementById('persona-topic');
+    personaField.value = topic;
+    resizeTextArea(personaField);
+    appendLog("🎲 Persona and focus generated by Groq.");
+  });
+}
+
+function openReviewMode() {
+  const text = document.getElementById('generated-content').value.trim();
+  if (!text) return appendLog("⚠️ Generate text first.");
+
+  const url = "https://x.com/compose/post?text=" + encodeURIComponent(text);
+  window.open(url, "_blank");
+  appendLog("🌐 Opened in browser. Review and click Post manually.");
+}
+
+async function triggerAutoDispatch(btn) {
+  const text = document.getElementById('generated-content').value.trim();
+  if (!text) return appendLog("⚠️ Generate text first.");
+
+  if (!window.pywebview || !window.pywebview.api) {
+    return appendLog("❌ App bridge is not ready.");
+  }
+
+  await runWithButton(btn, "Dispatching...", async () => {
+    appendLog("⏳ Triggering automated shortcut dispatch...");
+    try {
+      await pywebview.api.auto_dispatch_content(text);
+    } catch (error) {
+      appendLog(`❌ Dispatch request failed: ${error.message || error}`);
+    }
+  });
+}
+</script>
+
+  <script>
+    function toggleApiDropdown() {
+      const card = document.getElementById('api-dropdown');
+      card.classList.toggle('open');
+    }
+
+    function togglePassword(inputId, button) {
+      const input = document.getElementById(inputId);
+      const isHidden = input.type === 'password';
+      input.type = isHidden ? 'text' : 'password';
+      button.textContent = isHidden ? '🙈' : '👁';
+      button.setAttribute('aria-label', `${isHidden ? 'Hide' : 'Show'} ${inputId.replaceAll('_', ' ')}`);
+    }
+
+    function openExternal(target) {
+      if (window.pywebview && window.pywebview.api) {
+        pywebview.api.open_external_link(target);
+      }
+    }
+
+    // Ripple effect on click
+    document.addEventListener('pointerdown', (e) => {
+      const btn = e.target.closest('.action-btn, .social-link-btn');
+      if (!btn) return;
+      const circle = document.createElement('span');
+      const diameter = Math.max(btn.clientWidth, btn.clientHeight);
+      const radius = diameter / 2;
+      const rect = btn.getBoundingClientRect();
+      circle.style.width = circle.style.height = `${diameter}px`;
+      circle.style.left = `${e.clientX - rect.left - radius}px`;
+      circle.style.top = `${e.clientY - rect.top - radius}px`;
+      circle.classList.add('ripple');
+      const existing = btn.querySelector('.ripple');
+      if (existing) existing.remove();
+      btn.appendChild(circle);
+    });
+
+    async function runWithButton(btn, loadingText, asyncAction) {
+      if (!btn || btn.disabled) return;
+      const originalHTML = btn.innerHTML;
+      btn.disabled = true;
+      btn.innerHTML = `<span class="spinner"></span> <span>${loadingText}</span>`;
+      try {
+        await asyncAction();
+      } catch (err) {
+        console.error("Action error:", err);
+        window.appendLog(`❌ Action failed: ${err.message || err}`);
+      } finally {
+        btn.innerHTML = originalHTML;
+        btn.disabled = false;
+      }
+    }
+
+    async function loadSavedKeys() {
+      if (window.pywebview && window.pywebview.api) {
+        try {
+          const keys = await pywebview.api.load_keys();
+          document.getElementById('groq_api_key').value = keys.groq_api_key || '';
+          document.getElementById('llm_model').value = keys.llm_model || '';
+
+          if (!keys.groq_api_key) {
+            document.getElementById('api-dropdown').classList.add('open');
+          }
+        } catch (err) {
+          console.error("Failed to load keys:", err);
+        }
+      }
+    }
+
+    window.addEventListener('pywebviewready', loadSavedKeys);
+    window.addEventListener('DOMContentLoaded', setupTextAreas);
+
+    async function saveCredentials(btn) {
+      const payload = {
+        groq_api_key: document.getElementById('groq_api_key').value,
+        llm_model: document.getElementById('llm_model').value
+      };
+      await runWithButton(btn, 'Saving...', async () => {
+        await pywebview.api.save_keys(payload);
+      });
+    }
+
+    async function generateNow(btn) {
+      const topic = document.getElementById('persona-topic').value;
+      await runWithButton(btn, 'Thinking...', async () => {
+        const generated = await pywebview.api.trigger_generate_only(topic);
+        if (generated) {
+          window.setGeneratedContent(generated);
+        }
+      });
+    }
+
+    async function dispatchNow(btn) {
+      const staged = document.getElementById('generated-content').value.trim();
+      await runWithButton(btn, 'Opening X...', async () => {
+        if (!staged) {
+          window.appendLog("⚠️ Generate text first.");
+          return;
+        }
+        await pywebview.api.auto_dispatch_content(staged);
+      });
+    }
+
+    window.appendLog = function(msg) {
+      const box = document.getElementById('console-box');
+      box.textContent += msg + '\n';
+      box.scrollTop = box.scrollHeight;
+    };
+
+    window.setGeneratedContent = function(text) {
+      const field = document.getElementById('generated-content');
+      field.value = text.slice(0, MAX_POST_LENGTH);
+      updateCharacterCount();
+    };
+  </script>
+</body>
+</html>
