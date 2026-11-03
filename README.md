@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🌸 ShimaEnagaChan - xASSIST
+# 🕊️ ShimaEnagaChan - xASSIST
 
 **An aesthetic desktop assistant for generating, refining, and dispatching X (formerly Twitter) posts using Groq LLMs.**
 
@@ -217,6 +217,51 @@ python -m PyInstaller --noconsole --onefile ^
 ```
 
 > **Note:** The compiled binary will be placed inside the `dist/` directory (`dist/ShimaEnagaChan.exe`). Place your `.env` file beside the generated `.exe` to allow automatic key loading.
+
+---
+
+## 🔐 Security & Privacy
+
+- Store your Groq API key in `.env` or another secure local configuration mechanism.
+- Ensure `.env` is listed in `.gitignore`.
+- Never publish API keys, access tokens, or personal data in issues, screenshots, or commits.
+- Generated content may be sent to Groq for processing; avoid including confidential information in prompts.
+- Browser automation operates within your local desktop session. Keep your device and browser session secure.
+
+## ⚠️ Limitations & Responsible Use
+
+- This project relies on UI and keyboard automation, which may fail due to focus changes, browser updates, display scaling, or timing differences.
+- X Web Intent prepares content in X; it is not an official X Developer API integration.
+- One-click dispatch depends on browser focus and UI automation; it does not guarantee successful delivery.
+- You are responsible for reviewing content and complying with [X's Terms of Service](https://x.com/en/tos) and [Automation Rules](https://help.x.com/en/rules-and-policies/x-automation).
+
+---
+
+## 🛠️ Troubleshooting
+
+| Issue | Suggested check |
+| --- | --- |
+| `GROQ_API_KEY` not detected | Confirm `.env` exists, the key name is exact, and the app loads environment variables. |
+| Dependency installation fails | Verify Python version and run `python -m pip install --upgrade pip`. |
+| Browser does not open | Check your Windows default browser settings. |
+| Automation targets the wrong window | Close unrelated windows and ensure the browser is visible before dispatch. |
+| Executable fails to launch | Run `python main.py` first to identify errors; check PyInstaller asset and hidden-import requirements. |
+
+If an issue persists, open a GitHub issue with the error message and steps to reproduce. **Do not include secrets or API keys.**
+
+---
+
+## 📄 License
+
+This project is distributed under the **MIT License**. See [`LICENSE`](LICENSE) for the full license text.
+
+---
+
+## 🙌 Acknowledgements
+
+- [Groq](https://groq.com/) for LLM inference.
+- [X Web Intent](https://x.com/intent/post) for the post-composer interface.
+- The open-source Python ecosystem powering the desktop application.
 
 ---
 
