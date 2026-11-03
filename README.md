@@ -1,4 +1,4 @@
-# ⚡ X Intent Autopilot
+# ⚡ ShimaEnagaChan - xASSIST
 
 A Windows desktop application for generating engaging X (formerly Twitter) post drafts with **Groq-powered LLMs** and opening them in X through its native Web Intent interface.
 
