@@ -1,162 +1,200 @@
-# \# ⚡ X Intent Autopilot
+# ⚡ X Intent Autopilot
 
-# 
+A Windows desktop application for generating engaging X (formerly Twitter) post drafts with **Groq-powered LLMs** and opening them in X through its native Web Intent interface.
 
-# An autonomous Windows 11 desktop studio that drafts high-signal, engaging posts using \*\*Groq LLM\*\* and dispatches them directly to X (Twitter) via \*\*OS Web Intent shortcuts\*\*—completely bypassing the need for paid or restricted X Developer API keys.
+> **Important:** This project uses browser and keyboard automation to assist with publishing. Review every post before it is published, and use the tool responsibly.
 
-# 
+---
 
-# \---
+## ✨ Features
 
-# 
+- **No X Developer API key required** — Uses X's Web Intent URL to prepare a post.
+- **AI-powered drafting** — Generates concise post drafts with Groq.
+- **Desktop interface** — A native desktop window powered by `pywebview`.
+- **Browser-assisted publishing** — Opens your default browser and uses desktop automation to interact with the posting flow.
+- **Configurable scheduling** — Set posting intervals with randomized delays (“jitter”).
+- **Windows-focused workflow** — Designed for Windows 10/11 desktop environments.
 
-# \## ✨ Features
+## 🧰 Tech Stack
 
-# 
+| Component | Technology |
+| --- | --- |
+| Language | Python |
+| LLM provider | Groq API |
+| Desktop UI | `pywebview` |
+| Browser / keyboard automation | `pygetwindow`, `pyautogui` |
+| Post composer | X Web Intent |
 
-# \- \*\*No X API Keys Needed:\*\* Avoids developer tier paywalls, app approvals, and rate limits by utilizing X's native Web Intent endpoint (`https://x.com/intent/post`).
+## 🔄 How It Works
 
-# \- \*\*OS Shortcut Dispatcher:\*\* Automatically focuses your default web browser and triggers keyboard shortcuts (`Ctrl + Enter`) via `pyautogui` and `pygetwindow`.
+```text
+Persona / topic / instructions
+              │
+              ▼
+        Groq API (LLM)
+              │
+              ▼
+       Generated post draft
+              │
+              ▼
+       X Web Intent composer
+       https://x.com/intent/post
+              │
+              ▼
+       Desktop automation
+       ├── Opens the default browser
+       ├── Attempts to focus the browser window
+       └── Sends a keyboard shortcut
+              │
+              ▼
+       User reviews and publishes
+```
 
-# \- \*\*Ultra-Fast LLM Generation:\*\* Integrates Groq (`llama-3.3-70b-versatile`) for immediate, authentic drafting.
+The exact behavior depends on your browser, desktop focus, and application configuration. Keyboard automation can be unreliable if another window receives focus.
 
-# \- \*\*Modern GUI:\*\* Built with `pywebview` for an elegant, responsive native desktop wrapper.
+---
 
-# \- \*\*Custom Post Scheduling \& Jitter:\*\* Configurable posting intervals with randomized delays to maintain natural activity patterns.
+## 🚀 Getting Started
 
-# 
+### Prerequisites
 
-# \---
+- Windows 10 or Windows 11
+- Python **3.10 or later**
+- A supported desktop browser installed
+- An X account signed in to `x.com`
+- A Groq API key: [Groq Console](https://console.groq.com/)
 
-# 
+### 1. Clone the repository
 
-# \## 🛠️ How It Works
+Replace the placeholder URL below with the repository's actual URL:
 
-
-
-\[ Persona / Topic Inputs ]
-
-↓
-
-\[ Groq API (LLM) ] ── (Generates concise draft)
-
-↓
-
-\[ Web Intent URL ] ── (https://x.com/intent/post?text=...)
-
-↓
-
-\[ OS Shortcut Dispatcher ]
-
-├── Opens your default browser (pre-authenticated)
-
-├── Focuses the browser window via pygetwindow
-
-└── Simulates OS keystroke (Ctrl + Enter) to publish
-
-\---
-
-
-
-\## 🚀 Quick Start (Windows 11)
-
-
-
-\### 1. Prerequisites
-
-\- \*\*Windows 10 / 11\*\*
-
-\- \*\*Python 3.10+\*\* (Ensure \*\*"Add Python to PATH"\*\* was checked during installation)
-
-\- An active browser (Chrome, Edge, Brave, etc.) logged into your X account.
-
-
-
-\### 2. Clone the Repository
-
-```cmd
-
-git clone \[https://github.com/your-username/x-intent-autopilot.git](https://github.com/your-username/x-intent-autopilot.git)
-
+```powershell
+git clone https://github.com/your-username/x-intent-autopilot.git
 cd x-intent-autopilot
+```
 
+### 2. Create and activate a virtual environment
 
+```powershell
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+```
 
-3\. Create \& Activate Virtual Environment
+If PowerShell prevents activation, you can use Command Prompt instead:
 
-DOS
+```bat
+.venv\Scripts\activate.bat
+```
 
-python -m venv venv
+### 3. Install dependencies
 
-venv\\Scripts\\activate
-
-4\. Install Dependencies
-
-DOS
-
+```powershell
+python -m pip install --upgrade pip
 pip install -r requirements.txt
+```
 
-5\. Setup Environment Variables
+### 4. Configure environment variables
 
-Copy .env.example to .env:
+Create a local `.env` file from the example:
 
+```powershell
+Copy-Item .env.example .env
+```
 
+Add your Groq API key to `.env`:
 
-DOS
+```dotenv
+GROQ_API_KEY=your_groq_api_key_here
+```
 
-copy .env.example .env
+Keep `.env` private. **Do not commit API keys or other secrets to version control.**
 
-Open .env and add your Groq API Key (obtain a free key from Groq Console):
+### 5. Launch the application
 
-
-
-Code snippet
-
-GROQ\_API\_KEY=gsk\_your\_actual\_key\_here
-
-🖥️ Running the Application
-
-Launch the desktop UI:
-
-
-
-DOS
-
+```powershell
 python main.py
+```
 
-Tips for Smooth Dispatching:
+---
 
-Ensure your default browser is already logged in to x.com.
+## 🖥️ Usage
 
+1. Launch the application.
+2. Enter or configure the persona, topic, and prompt details.
+3. Generate a draft using Groq.
+4. Review and edit the generated content.
+5. Start the dispatch workflow to open the post in X.
+6. Confirm the correct browser window and account are active.
+7. **Review the post and publish it yourself**, unless your configured workflow explicitly performs that action.
 
+### Tips for reliable browser automation
 
-During the shortcut dispatch sequence, avoid interacting with the mouse or keyboard for \~2 seconds while the window gains focus and submits the post.
+- Sign in to X in your default browser before starting.
+- Avoid using the mouse or keyboard while the automation sequence is running.
+- Keep the browser visible and allow it to receive focus.
+- Test the workflow with a draft before enabling any scheduled activity.
+- Do not use high-frequency or repetitive posting patterns.
 
+---
 
+## 📦 Build a Windows executable
 
-⚙️ Compiling to a Standalone Executable (.exe)
+You can package the application with PyInstaller:
 
-To turn the script into a single-file executable for Windows:
-
-
-
-DOS
-
+```powershell
 pip install pyinstaller
-
 pyinstaller --noconsole --onefile main.py
+```
 
-The compiled application will be generated in dist/main.exe.
+The executable is typically created at:
 
+```text
+dist\main.exe
+```
 
+> **Packaging note:** Depending on how the project loads its UI assets and configuration files, additional PyInstaller options or bundled files may be required. Test the executable on a clean environment before distributing it.
 
-⚠️ Disclaimer
+---
 
-This tool uses desktop automation to assist with posting content. Always comply with X's Automation Rules and Terms of Service. Avoid high-frequency spam or aggressive automated behavior that could result in account penalties.
+## 🔐 Security & Privacy
 
+- Store your Groq API key in `.env` or another secure local configuration mechanism.
+- Ensure `.env` is listed in `.gitignore`.
+- Never publish API keys, access tokens, or personal data in issues, screenshots, or commits.
+- Generated content may be sent to Groq for processing; avoid including confidential information in prompts.
+- Browser automation operates within your local desktop session. Keep your device and browser session secure.
 
+## ⚠️ Limitations & Responsible Use
 
-📄 License
+- This project relies on UI and keyboard automation, which may fail due to focus changes, browser updates, display scaling, or timing differences.
+- X Web Intent prepares content in X; it is not an official X Developer API integration.
+- Scheduling and randomized delays do not guarantee successful delivery or compliance.
+- You are responsible for reviewing content and complying with [X's Terms of Service](https://x.com/en/tos) and [Automation Rules](https://help.x.com/en/rules-and-policies/x-automation).
 
-Distributed under the MIT License. See LICENSE for more information.
+---
 
+## 🛠️ Troubleshooting
+
+| Issue | Suggested check |
+| --- | --- |
+| `GROQ_API_KEY` not detected | Confirm `.env` exists, the key name is exact, and the app loads environment variables. |
+| Dependency installation fails | Verify Python version and run `python -m pip install --upgrade pip`. |
+| Browser does not open | Check your Windows default browser settings. |
+| Automation targets the wrong window | Close unrelated windows and ensure the browser is visible before dispatch. |
+| Executable fails to launch | Run `python main.py` first to identify errors; check PyInstaller asset and hidden-import requirements. |
+
+If an issue persists, open a GitHub issue with the error message and steps to reproduce. **Do not include secrets or API keys.**
+
+---
+
+## 📄 License
+
+This project is distributed under the **MIT License**. See [`LICENSE`](LICENSE) for the full license text.
+
+---
+
+## 🙌 Acknowledgements
+
+- [Groq](https://groq.com/) for LLM inference.
+- [X Web Intent](https://x.com/intent/post) for the post-composer interface.
+- The open-source Python ecosystem powering the desktop application.
