@@ -41,6 +41,16 @@ Whether you want complete control with manual reviews or a swift 1-click dispatc
 
 ---
 
+## 📥 Download
+
+Download the latest Windows build from
+[**GitHub Releases**](https://github.com/rahuldas75/ShimaEnagaChan-xASSIST/releases/latest).
+
+> **Note:** Windows may display a security warning for unsigned executables.
+> Only download builds from this official repository.
+
+---
+
 ## 🗂️ Project Structure
 
 ```text
