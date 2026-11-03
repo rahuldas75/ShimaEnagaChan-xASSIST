@@ -1,0 +1,22 @@
+# Environment & Secrets
+.env
+*.env
+
+# Python bytecode & cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+venv/
+env/
+.venv/
+
+# Build artifacts (PyInstaller)
+build/
+dist/
+*.spec
+
+# System files
+.DS_Store
+Thumbs.db
