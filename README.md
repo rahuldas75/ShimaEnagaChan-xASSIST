@@ -92,7 +92,7 @@ ShimaEnagaChan-xASSIST/
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/your-username/ShimaEnagaChan-xASSIST.git
+git clone https://github.com/rahuldas75/ShimaEnagaChan-xASSIST.git
 cd ShimaEnagaChan-xASSIST
 ```
 
